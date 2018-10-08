@@ -41,7 +41,15 @@ void getInput(){
     inputFile.close();
 };
 
+class Neuron{
+    double w;
+    double b;
 
+public:
+    double computeActivation(double ){
+
+    }
+};
 
 int main(int argc, const char * argv[]) {
 
