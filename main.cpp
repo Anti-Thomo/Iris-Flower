@@ -4,10 +4,16 @@
 #include <fstream>
 
 using namespace std;
+
+// getInput vectors
+
 vector <float> inputSL;
 vector <float> inputSW;
 vector <float> inputPL;
 vector <float> inputPW;
+vector <string> inSpec;
+
+// computeNeuron vectors
 
 vector <float> n1;
 vector <float> n2;
@@ -31,6 +37,8 @@ vector <float> n5Weight{
     0.5, 0.5, 0.5, 0.5
 };
 
+// computeOutput vectors
+
 vector <float> setoWeight{
     0.5, 0.5, 0.5, 0.5, 0.5
 };
@@ -44,6 +52,12 @@ vector <float> virgWeight{
 vector <float> setoProb;
 vector <float> versProb;
 vector <float> virgProb;
+
+// getActual vectors
+
+vector <float> setoActual;
+vector <float> versActual;
+vector <float> virgActual;
 
 void getInput(){
 
@@ -68,6 +82,7 @@ void getInput(){
         inputSW.push_back(stof(sepal_width));
         inputPL.push_back(stof(petal_length));
         inputPW.push_back(stof(petal_width));
+        inSpec.push_back(species);
 
     }
 
@@ -167,14 +182,35 @@ void computeOutput(){
 
 }
 
+void getActual(){
+    for (int i =0; i!=inSpec.size(); ++i){
+
+        if (inSpec[i]=="setosa"){
+            setoActual.push_back(1);
+            versActual.push_back(0);
+            virgActual.push_back(0);
+
+        }else if (inSpec[i]=="versicolor"){
+            setoActual.push_back(0);
+            versActual.push_back(1);
+            virgActual.push_back(0);
+        }else if (inSpec[i]=="virginica"){
+            setoActual.push_back(0);
+            versActual.push_back(0);
+            virgActual.push_back(1);
+        }
+
+    }
+}
+
 int main(int argc, const char * argv[]) {
 
     getInput();
     computeNeuron();
     computeOutput();
-    for (int i=0; i!=setoProb.size(); ++i){
-
-        cout << setoProb[i] <<", "<<versProb[i]<<", "<<virgProb[i]<<endl;
+    getActual();
+    for (int i=0; i!=setoActual.size(); ++i){
+        cout << setoActual[i] <<", "<<versActual[i]<<", "<<virgActual[i]<<endl;
     }
     return 0;
 }
