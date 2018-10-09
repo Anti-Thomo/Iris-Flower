@@ -4,7 +4,16 @@
 #include <fstream>
 
 using namespace std;
-vector <float> input;
+vector <float> inputSL;
+vector <float> inputSW;
+vector <float> inputPL;
+vector <float> inputPW;
+
+vector<float> n1;
+vector<float> n2;
+vector<float> n3;
+vector<float> n4;
+vector<float> n5;
 
 void getInput(){
 
@@ -25,61 +34,108 @@ void getInput(){
         getline(inputFile, petal_width, ',');
         getline(inputFile, species, '\n');
 
-        input.push_back(stof(sepal_length));
-        input.push_back(stof(sepal_width));
-        input.push_back(stof(petal_length));
-        input.push_back(stof(petal_width));
-
-        cout<<sepal_length<<endl;
-        cout<<sepal_width<<endl;
-        cout<<petal_length<<endl;
-        cout<<petal_width<<endl;
-        cout<<species<<endl;
+        inputSL.push_back(stof(sepal_length));
+        inputSW.push_back(stof(sepal_width));
+        inputPL.push_back(stof(petal_length));
+        inputPW.push_back(stof(petal_width));
 
     }
 
     inputFile.close();
 };
 
-class Neuron{
-    double w;
-    double b;
+vector<float> n1Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector<float> n2Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector<float> n3Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector<float> n4Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector<float> n5Weight{
+    0.5, 0.5, 0.5, 0.5
+};
 
-public:
-    double computeActivation(double ){
+vector <float> setoWeight{
+    0.5, 0.5, 0.5, 0.5, 0.5
+};
+vector <float> versWeight{
+    0.5, 0.5, 0.5, 0.5, 0.5
+};
+vector <float> virgWeight{
+    0.5, 0.5, 0.5, 0.5, 0.5
+};
+
+void computeNeuron(){
+
+    float inp=0;
+    float out=0;
+
+    for (int i=0; i<=inputSL.size();++i) {
+
+        inp = inputSL[i]*n1Weight[0]
+                +inputSW[i]*n1Weight[1]
+                +inputPL[i]*n1Weight[2]
+                +inputPW[i]*n1Weight[3];
+
+        out = 1/(1+exp(-inp));
+
+        n1.push_back(out);
+
+        inp = inputSL[i]*n2Weight[0]
+                +inputSW[i]*n2Weight[1]
+                +inputPL[i]*n2Weight[2]
+                +inputPW[i]*n2Weight[3];
+
+        out = 1/(1+exp(-inp));
+
+        n2.push_back(out);
+
+        inp = inputSL[i]*n3Weight[0]
+                +inputSW[i]*n3Weight[1]
+                +inputPL[i]*n3Weight[2]
+                +inputPW[i]*n3Weight[3];
+
+        out = 1/(1+exp(-inp));
+
+        n3.push_back(out);
+
+        inp = inputSL[i]*n4Weight[0]
+                +inputSW[i]*n4Weight[1]
+                +inputPL[i]*n4Weight[2]
+                +inputPW[i]*n4Weight[3];
+
+        out = 1/(1+exp(-inp));
+
+        n4.push_back(out);
+
+        inp = inputSL[i]*n5Weight[0]
+                +inputSW[i]*n5Weight[1]
+                +inputPL[i]*n5Weight[2]
+                +inputPW[i]*n5Weight[3];
+
+        out = 1/(1+exp(-inp));
+
+        n5.push_back(out);
 
     }
 };
 
+void computeOutput(){
+
+}
+
 int main(int argc, const char * argv[]) {
 
     getInput();
+    computeNeuron();
+
+    for (int i=0; i<=n1.size(); ++i){
+        cout << n1[i] <<", "<<n2[i]<<", "<<n3[i]<<", "<<n4[i]<<", "<<n5[i]<<endl;
+    }
     return 0;
 }
-
-
-
-/*for (unsigned i = 0; i != 50; ++i) {
-        vector<float> predict = sig(dot(X, W, 4, 4, 1 ) );
-        vector<float> predictError = y - predict;
-        vector<float> predictDelta = predictError * sigD(predict);
-        vector<float> W_delta = dot(transpose( &X[0], 4, 4 ), predictDelta, 4, 4, 1);
-        W = W + W_delta;
-    };*/
-
-/*vector <float> dot (const vector <float>& m1, const vector <float>& m2,
-                    const int m1_rows, const int m1_columns, const int m2_columns) {
-
-    vector <float> output (m1_rows*m2_columns);
-
-    for( int row = 0; row != m1_rows; ++row ) {
-        for( int col = 0; col != m2_columns; ++col ) {
-            output[ row * m2_columns + col ] = 0.f;
-            for( int k = 0; k != m1_columns; ++k ) {
-                output[ row * m2_columns + col ] += m1[ row * m1_columns + k ] * m2[ k * m2_columns + col ];
-            }
-        }
-    }
-
-    return output;
-}*/
