@@ -9,11 +9,41 @@ vector <float> inputSW;
 vector <float> inputPL;
 vector <float> inputPW;
 
-vector<float> n1;
-vector<float> n2;
-vector<float> n3;
-vector<float> n4;
-vector<float> n5;
+vector <float> n1;
+vector <float> n2;
+vector <float> n3;
+vector <float> n4;
+vector <float> n5;
+
+vector <float> n1Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector <float> n2Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector <float> n3Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector <float> n4Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+vector <float> n5Weight{
+    0.5, 0.5, 0.5, 0.5
+};
+
+vector <float> setoWeight{
+    0.5, 0.5, 0.5, 0.5, 0.5
+};
+vector <float> versWeight{
+    0.5, 0.5, 0.5, 0.5, 0.5
+};
+vector <float> virgWeight{
+    0.5, 0.5, 0.5, 0.5, 0.5
+};
+
+vector <float> setoProb;
+vector <float> versProb;
+vector <float> virgProb;
 
 void getInput(){
 
@@ -44,38 +74,12 @@ void getInput(){
     inputFile.close();
 };
 
-vector<float> n1Weight{
-    0.5, 0.5, 0.5, 0.5
-};
-vector<float> n2Weight{
-    0.5, 0.5, 0.5, 0.5
-};
-vector<float> n3Weight{
-    0.5, 0.5, 0.5, 0.5
-};
-vector<float> n4Weight{
-    0.5, 0.5, 0.5, 0.5
-};
-vector<float> n5Weight{
-    0.5, 0.5, 0.5, 0.5
-};
-
-vector <float> setoWeight{
-    0.5, 0.5, 0.5, 0.5, 0.5
-};
-vector <float> versWeight{
-    0.5, 0.5, 0.5, 0.5, 0.5
-};
-vector <float> virgWeight{
-    0.5, 0.5, 0.5, 0.5, 0.5
-};
-
 void computeNeuron(){
 
     float inp=0;
     float out=0;
 
-    for (int i=0; i<=inputSL.size();++i) {
+    for (int i=0; i!=inputSL.size();++i) {
 
         inp = inputSL[i]*n1Weight[0]
                 +inputSW[i]*n1Weight[1]
@@ -121,11 +125,45 @@ void computeNeuron(){
         out = 1/(1+exp(-inp));
 
         n5.push_back(out);
-
     }
 };
 
 void computeOutput(){
+
+    float inp=0;
+    float out=0;
+
+    for (int i=0; i!=n1.size();++i) {
+        inp=n1[i]*setoWeight[0]
+                +n2[i]*setoWeight[1]
+                +n3[i]*setoWeight[2]
+                +n4[i]*setoWeight[3]
+                +n5[i]*setoWeight[4];
+
+        out=1/(1+exp(-inp));
+
+        setoProb.push_back(out);
+
+        inp=n1[i]*versWeight[0]
+            +n2[i]*versWeight[1]
+            +n3[i]*versWeight[2]
+            +n4[i]*versWeight[3]
+            +n5[i]*versWeight[4];
+
+        out=1/(1+exp(-inp));
+
+        versProb.push_back(out);
+
+        inp=n1[i]*virgWeight[0]
+            +n2[i]*virgWeight[1]
+            +n3[i]*virgWeight[2]
+            +n4[i]*virgWeight[3]
+            +n5[i]*virgWeight[4];
+
+        out=1/(1+exp(-inp));
+
+        virgProb.push_back(out);
+    }
 
 }
 
@@ -133,9 +171,10 @@ int main(int argc, const char * argv[]) {
 
     getInput();
     computeNeuron();
+    computeOutput();
+    for (int i=0; i!=setoProb.size(); ++i){
 
-    for (int i=0; i<=n1.size(); ++i){
-        cout << n1[i] <<", "<<n2[i]<<", "<<n3[i]<<", "<<n4[i]<<", "<<n5[i]<<endl;
+        cout << setoProb[i] <<", "<<versProb[i]<<", "<<virgProb[i]<<endl;
     }
     return 0;
 }
