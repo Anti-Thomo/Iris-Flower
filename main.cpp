@@ -210,7 +210,10 @@ int main(int argc, const char * argv[]) {
     computeOutput();
     getActual();
     for (int i=0; i!=setoActual.size(); ++i){
-        cout << setoActual[i] <<", "<<versActual[i]<<", "<<virgActual[i]<<endl;
+        cout<<"Predicted: ("<<setoProb[i]<<", "<<versProb[i]<<", "<<virgProb[i]<<") | "
+            <<"Actual: ("<<setoActual[i] <<", "<<versActual[i]<<", "<<virgActual[i]<<")"<<endl;
     }
     return 0;
 }
+
+// Needs error backpropogation
