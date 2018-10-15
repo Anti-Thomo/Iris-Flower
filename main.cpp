@@ -59,18 +59,53 @@ vector <float> setoActual;
 vector <float> versActual;
 vector <float> virgActual;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+int L = 3;
+
+int N[]={4,5,3};
+
+double w[20][1000][1000] = {0.5};
+
+double b[20][1000]={};
+
+double a[20][1000];
+
+double Z[20][1000];
+
+double S(double i){
+    double out;
+    out=1/(1+exp(-i));
+    return out;
+};
+
+void activationLoop(){
+    for (int l=1; l<=L; ++l){
+        for (int n=0; n<=N[l]; ++n){
+            for (int p=0; p<=N[l-1]; ++p){
+                Z[l][n] = Z[l][n] + (w[l][n][p] * a[l-1][p]);
+            }
+            Z[l][n] = Z[l][n] + b[l][n];
+            a[l][n] = S(Z[l][n]);
+        }
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 void getInput(){
 
     ifstream inputFile;
-    inputFile.open("C:\\Users\\User\\CLionProjects\\Iris-Flower\\Iris.txt");
+    inputFile.open(R"(C:\Users\User\CLionProjects\Iris-Flower\Iris.txt)");
 
     while (inputFile.good()and !inputFile.eof()){
 
-        /*for(int i=0; i<=N[0]; ++i){
+        for(int i=0; i<=N[0]; ++i){
 
-            getline(inputFile,a[0,i],',')
+            getline(inputFile,a[0][i],',');
 
-        }*/
+        }
 
         string sepal_length;
         string sepal_width;
@@ -224,32 +259,3 @@ int main(int argc, const char * argv[]) {
 
 // Needs error backpropogation
 
-int L = 3;
-
-int N[]={4,5,3};
-
-double w[20][1000][1000] = {0.5};
-
-double b[20][1000]={1};
-
-double a[20][1000];
-
-double Z[20][1000];
-
-double S(double i){
-    double out;
-    out=1/(1+exp(-i));
-    return out;
-};
-
-void activationLoop(){
-    for (int l=1; l<=L; ++l){
-        for (int n=0;n<=N[l];++n){
-            for (int p=0;p<=N[l-1];++p){
-                Z[l,n] += w[l,n,p]*a[l-1,p];
-            }
-            Z[l,n] += b[l,n];
-            a[l,n] = S(Z[l,n]);
-        }
-    }
-};
