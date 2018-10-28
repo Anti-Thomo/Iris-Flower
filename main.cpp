@@ -35,13 +35,14 @@ void setWeight(int l, int n, int p, double weight){
 void activationLoop(int i){
     for (int l=1; l<L; ++l) {
         for (int n = 0; n < N[l]; ++n) {
+            Z[l][n][i] = 0;
             for (int p = 0; p < N[l - 1]; ++p) {
                 Z[l][n][i] = Z[l][n][i] + (w[l][n][p] * a[l - 1][p][i]);
-                cout<<"Layer: "<<l<<", Neuron: "<<n<<", PrevNeuron: "<<p<<" --- Weight: "<<w[l][n][p]<<", Activation: "<<a[l-1][p][i]<<endl;
+                //cout<<"Layer: "<<l<<", Neuron: "<<n<<", PrevNeuron: "<<p<<" --- Weight: "<<w[l][n][p]<<", Activation: "<<a[l-1][p][i]<<endl;
             }
             Z[l][n][i] = Z[l][n][i] + b[l][n];
             a[l][n][i] = S(Z[l][n][i]);
-            cout<<a[l][n][i]<< endl;
+            //cout<<a[l][n][i]<< endl;
         }
     }
 };
@@ -86,7 +87,7 @@ void getInput(){
 double getError(int n, int i){
     double err;
     err=pow((type[i][n]-a[L-1][n][i]),2);
-    cout<<type[i][n]<<" - "<<a[L-1][n][i]<<" = "<<err<<endl;
+    //cout<<"Neuron: "<<n<<" Index: "<<i<<" Error calc: ("<<type[i][n]<<" - "<<a[L-1][n][i]<<")^2 = "<<err<<endl;
     return err;
 }
 
@@ -106,15 +107,29 @@ double avgError(){
 }
 
 void train() {
+
+    for(int i=0;i<150;++i){
+        activationLoop(i);
+    }
+
     int layer = 1 + rand() % (L - 1);
-    int neuron = rand() % (N[layer] - 1);
-    int prevNeur = rand() % N[layer - 1]-1;
-    double change = (((double(rand()) / RAND_MAX) * 2) - 1) * 0.1;
+    int neuron = rand() % (N[layer]);
+    int prevNeur = rand() % N[layer - 1];
+    double change = (((double(rand()) / RAND_MAX) * 2.0) - 1.0) * 0.1;
     double prevWeight = w[layer][neuron][prevNeur];
 
     double errBef=avgError();
 
+    //cout<<"Layer: "<<layer<<", Neuron: "<<neuron<<", Prev Neuron: "<<prevNeur<<endl;
+
     //cout<<"BEFORE: "<<errBef<<endl;
+
+    /*for(int i=0;i<150;++i){
+        for(int j=0;j<3;++j){
+            cout<<a[2][j][i]<<" ";
+        }
+        cout<<endl;
+    }*/
 
     //cout << prevWeight << " + (" << change << ")" << " = ";
     setWeight(layer, neuron, prevNeur, prevWeight + change);
@@ -127,6 +142,13 @@ void train() {
     double errAft=avgError();
 
     //cout<<"AFTER: "<<errAft<<endl;
+
+    /*for(int i=0;i<150;++i){
+        for(int j=0;j<3;++j){
+            cout<<a[2][j][i]<<" ";
+        }
+        cout<<endl;
+    }*/
 
     if(errBef<=errAft){
         setWeight(layer, neuron, prevNeur, prevWeight);
@@ -141,7 +163,6 @@ void train() {
 
 int main(int argc, const char * argv[]) {
 
-
     for(int l=0;l<20;++l){
         for(int n=0;n<1000;++n){
             for(int p=0;p<1000;++p){
@@ -151,20 +172,17 @@ int main(int argc, const char * argv[]) {
         }
     };
 
-
     getInput();
 
-    //for(int i=0;i<10000;++i){
-      //  train();
-    //}
-
-    for(int i=0;i<150;++i){
-        activationLoop(i);
+    for(int i=0;i<100000;++i){
+        train();
+        cout<<i<<endl;
     }
 
     for(int i=0;i<150;++i){
-        for(int j=0;j<4;++j){
-            cout<<a[0][j][i]<<" ";
+        cout<<i<<": ";
+        for(int j=0;j<3;++j){
+            cout<<a[2][j][i]<<" ";
         }
         cout<<endl;
     }
