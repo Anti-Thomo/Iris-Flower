@@ -10,6 +10,10 @@ using namespace std;
 
 int L = 3;
 
+int numTrained = 60;
+
+int numInput = 150;
+
 int N[]={4,5,3};
 
 double w[20][1000][1000];
@@ -32,6 +36,10 @@ double S(double i){
 
 void setWeight(int l, int n, int p, double weight){
     w[l][n][p]=weight;
+}
+
+void setBias(int l, int n, double bias){
+    b[l][n]=bias;
 }
 
 void activationLoop(int i){
@@ -95,7 +103,7 @@ double avgError(){
     double errSum=0;
     double avErr;
     int runs=0;
-    for (int i = 0; i < 150; ++i) {
+    for (int i = 0; i < numTrained; ++i) {
         for (int n = 0; n < N[L - 1]; ++n) {
             errSum = errSum + getError(n, i);
             runs=runs+1;
@@ -107,7 +115,7 @@ double avgError(){
 
 void train() {
 
-    for(int i=0;i<150;++i){
+    for(int i=0; i<numTrained; ++i){
         activationLoop(i);
     }
 
@@ -115,13 +123,21 @@ void train() {
     int neuron = rand() % (N[layer]);
     int prevNeur = rand() % N[layer - 1];
     double change = (((double(rand()) / RAND_MAX) * 2.0) - 1.0) * 0.1;
+
     double prevWeight = w[layer][neuron][prevNeur];
+    double prevBias = b[layer][neuron];
 
     double errBef=avgError();
 
-    setWeight(layer, neuron, prevNeur, prevWeight + change);
+    double biasOrWeight = double(rand()) / RAND_MAX;
 
-    for(int i=0;i<150;++i){
+    if (biasOrWeight<=0.8){
+        setWeight(layer, neuron, prevNeur, prevWeight + change);
+    }else if (biasOrWeight>0.8){
+        setBias(layer, neuron, prevBias + change);
+    }
+
+    for(int i=0;i<numTrained;++i){
         activationLoop(i);
     }
 
@@ -129,18 +145,18 @@ void train() {
 
     if(errBef<=errAft){
         setWeight(layer, neuron, prevNeur, prevWeight);
+        setBias(layer,neuron,prevBias);
         //cout<<"Unchanged"<<endl;
     }else{
         //cout<<"Changed"<<endl;
     }
 }
 
-void setPrecict(){
+void setPredict(){
     ofstream output;
     output.open(R"(C:\Users\User\CLionProjects\Iris-Flower\prediction.txt)");
 
-    for(int i=0;i<150;++i){
-        cout<<i<<": ";
+    for(int i=0;i<numInput;++i){
 
         if(a[2][0][i] > a[2][1][i] && a[2][0][i] > a[2][2][i]){
             predict[i]="Setosa";
@@ -149,12 +165,96 @@ void setPrecict(){
         }else if(a[2][2][i] > a[2][0][i] && a[2][2][i] > a[2][1][i]){
             predict[i]="Virginica";
         }
-        cout<<predict[i]<<endl;
 
-        output<<i<<": "<<predict[i]<<endl;
+        output<<i+1<<": "<<predict[i]<<endl;
 
     }
     output.close();
+
+}
+
+void saveBias(){
+    ofstream bias;
+    bias.open(R"(C:\Users\User\CLionProjects\Iris-Flower\bias.txt)");
+
+    for(int l=1; l<L;++l){
+        for(int n=0; n<N[l]; ++n){
+            bias<<b[l][n];
+            if(n!=N[l]-1){
+                bias<<",";
+            }
+        }
+        if(l!=L-1){
+            bias<<endl;
+        }
+    }
+    bias.close();
+
+}
+
+void saveWeights(){
+    ofstream weights;
+    weights.open(R"(C:\Users\User\CLionProjects\Iris-Flower\weights.txt)");
+
+    for (int l=1; l<L; ++l) {
+        for (int n = 0; n < N[l]; ++n) {
+            for (int p = 0; p < N[l - 1]; ++p) {
+                weights<<w[l][n][p];
+                if (p!=N[l-1]-1){
+                    weights<<",";
+                }
+            }
+            if(!(n==N[l]-1 & l==L-1)){
+                weights<<endl;
+            }
+        }
+    }
+    weights.close();
+
+}
+
+void readBias(){
+    ifstream biasIn;
+    biasIn.open(R"(C:\Users\User\CLionProjects\Iris-Flower\bias.txt)");
+
+    while (biasIn.good()and !biasIn.eof()){
+        for(int l=1; l<L;++l){
+            for(int n=0; n<N[l]; ++n) {
+                string inB;
+                if (n!=N[l]-1){
+                    getline(biasIn, inB, ',');
+                    b[l][n]=stod(inB);
+                } else{
+                    getline(biasIn, inB, '\n');
+                    b[l][n]=stod(inB);
+                }
+            }
+        }
+    }
+    biasIn.close();
+};
+
+void readWeights(){
+    ifstream weightsIn;
+    weightsIn.open(R"(C:\Users\User\CLionProjects\Iris-Flower\weights.txt)");
+
+    while (weightsIn.good()and !weightsIn.eof()){
+        for (int l=1; l<L; ++l) {
+            for (int n = 0; n < N[l]; ++n) {
+                for (int p = 0; p < N[l - 1]; ++p) {
+                    string inW;
+                    if (p!=N[l-1]-1){
+                        getline(weightsIn, inW, ',');
+                        w[l][n][p]=stod(inW);
+                    } else{
+                        getline(weightsIn, inW, '\n');
+                        w[l][n][p]=stod(inW);
+                    }
+                }
+            }
+        }
+    }
+    weightsIn.close();
 
 }
 
@@ -166,6 +266,8 @@ int main(int argc, const char * argv[]) {
                 double setW=((double(rand())/RAND_MAX)*2.0)-1.0;
                 setWeight(l,n,p,setW);
             }
+            double setB=((double(rand())/RAND_MAX)*2.0)-1.0;
+            setBias(l,n,setB);
         }
     };
 
@@ -175,7 +277,20 @@ int main(int argc, const char * argv[]) {
         train();
     }
 
-    setPrecict();
+    for(int i=0;i<numInput; ++i){
+        activationLoop(i);
+    }
+
+    setPredict();
+    saveWeights();
+    saveBias();
+
+    readBias();
+    readWeights();
+
+    for(int i=0;i<numInput; ++i){
+        activationLoop(i);
+    }
 
     return 0;
 }
